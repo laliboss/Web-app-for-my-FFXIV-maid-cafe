@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eorzean Maid Haven</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f5f6;
+        }
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+        .nav-text {
+            font-size: 0.75rem;
+        }
+        .logo-font {
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+        }
+        .nav-active {
+            color: #ec4899;
+        }
+        .nav-inactive {
+            color: #6b7280;
+        }
+        .custom-shadow {
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .staff-badge {
+            background-color: #e9f5e9;
+            color: #16a34a;
+        }
+        .admin-badge {
+            background-color: #f3e8ff;
+            color: #9333ea;
+        }
+        .button-primary {
+            background-color: #ec4899;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+        }
+        .button-primary:hover {
+            background-color: #db2777;
+        }
+        .button-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+        }
+        .button-secondary:hover {
+            background-color: #d1d5db;
+        }
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 400px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Content Area -->
+        <div id="content" class="pb-20">
+            <!-- HOME VIEW -->
+            <div id="home-view">
+                <!-- Header Image -->
+                <div class="relative h-40 rounded-lg overflow-hidden">
+                    <img src="/api/placeholder/800/320" alt="Maid Cafe" class="w-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+                        <h1 class="text-xl font-bold logo-font">Eorzean Maid Haven</h1>
+                        <p>Open Friday-Sunday, 8PM-12AM EST</p>
+                    </div>
+                </div>
+                
+                <!-- Announcement -->
+                <div class="bg-gray-100 p-4 rounded-lg mt-4">
+                    <h2 class="text-lg font-semibold mb-2">Latest Announcement</h2>
+                    <p>Welcome to our new app! Now you can check our menu, events, and more on the go. We hope to see you soon!</p>
+                </div>
+                
+                <!-- Next Event -->
+                <div class="mt-4">
+                    <h2 class="text-lg font-semibold mb-2">Next Event</h2>
+                    <div class="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-medium">Starlight Celebration Special</h3>
+                            <span class="text-sm bg-pink-200 px-2 py-1 rounded">December 18, 2025</span>
+                        </div>
+                        <p class="text-sm mt-1">Holiday-themed menu and decorations with special performances</p>
+                    </div>
+                </div>
+                
+                <!-- Featured Menu -->
+                <div class="mt-4">
+                    <h2 class="text-lg font-semibold mb-2">Featured Menu Items</h2>
+                    <div class="space-y-2">
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Moogle Mocha</h3>
+                                <span class="text-sm font-semibold">5,000 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">A warm coffee with whipped cream and cinnamon, topped with a moogle-shaped marshmallow</p>
+                        </div>
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Carbuncle Cupcakes</h3>
+                                <span class="text-sm font-semibold">3,500 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Colorful cupcakes that glow like your favorite summoner's pet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENU VIEW -->
+            <div id="menu-view" class="hidden p-4">
+                <h1 class="text-xl font-bold mb-4">Our Menu</h1>
+                
+                <!-- Drinks -->
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold bg-pink-100 px-3 py-1 rounded-md">Drinks</h2>
+                    <div class="mt-2 space-y-2">
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Moogle Mocha</h3>
+                                <span class="text-sm font-semibold">5,000 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">A warm coffee with whipped cream and cinnamon, topped with a moogle-shaped marshmallow</p>
+                        </div>
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Limit Break Lemonade</h3>
+                                <span class="text-sm font-semibold">4,000 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">A refreshing citrus drink that changes color with each sip</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sweets -->
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold bg-pink-100 px-3 py-1 rounded-md">Sweets</h2>
+                    <div class="mt-2 space-y-2">
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Carbuncle Cupcakes</h3>
+                                <span class="text-sm font-semibold">3,500 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Colorful cupcakes that glow like your favorite summoner's pet</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Savory -->
+                <div>
+                    <h2 class="text-lg font-semibold bg-pink-100 px-3 py-1 rounded-md">Savory</h2>
+                    <div class="mt-2 space-y-2">
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Chocobo Cheese Plate</h3>
+                                <span class="text-sm font-semibold">7,000 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Assorted Eorzean cheeses with gysahl green garnish</p>
+                        </div>
+                        <div class="bg-white border rounded-lg p-3">
+                            <div class="flex justify-between">
+                                <h3 class="font-medium">Tank Buster Sandwich</h3>
+                                <span class="text-sm font-semibold">8,500 gil</span>
+                            </div>
+                            <p class="text-sm text-gray-600">A hearty sandwich that will give you the strength to face any trial</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENTS VIEW -->
+            <div id="events-view" class="hidden p-4">
+                <h1 class="text-xl font-bold mb-4">Upcoming Events</h1>
+                <div class="space-y-4">
+                    <div class="bg-white border rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-lg font-medium">Starlight Celebration Special</h2>
+                            <span class="text-sm bg-pink-200 px-2 py-1 rounded">December 18, 2025</span>
+                        </div>
+                        <p class="mt-2">Holiday-themed menu and decorations with special performances</p>
+                    </div>
+                    <div class="bg-white border rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-lg font-medium">Cosplay Night: Scions Edition</h2>
+                            <span class="text-sm bg-pink-200 px-2 py-1 rounded">April 15, 2025</span>
+                        </div>
+                        <p class="mt-2">Our maids and butlers dress as your favorite Scions of the Seventh Dawn</p>
+                    </div>
+                    <div class="bg-white border rounded-lg p-4">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-lg font-medium">Bard Music Concert</h2>
+                            <span class="text-sm bg-pink-200 px-2 py-1 rounded">May 10, 2025</span>
+                        </div>
+                        <p class="mt-2">Live performance by our talented in-house bards</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFO VIEW -->
+            <div id="info-view" class="hidden p-4">
+                <h1 class="text-xl font-bold mb-4">Cafe Information</h1>
+                
+                <div class="bg-white border rounded-lg overflow-hidden">
+                    <img src="/api/placeholder/800/320" alt="Cafe Interior" class="w-full h-48 object-cover">
+                    
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <h2 class="text-lg font-semibold">About Us</h2>
+                            <p>A cozy maid cafe offering delightful service and delicious treats for weary adventurers.</p>
+                        </div>
+                        
+                        <div>
+                            <h2 class="text-lg font-semibold">Location</h2>
+                            <p>Plot 30, Ward 8, The Goblet, Ultros</p>
+                        </div>
+                        
+                        <div>
+                            <h2 class="text-lg font-semibold">Hours</h2>
+                            <p>Open Friday-Sunday, 8PM-12AM EST</p>
+                        </div>
+                        
+                        <div>
+                            <h2 class="text-lg font-semibold">Etiquette</h2>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Please be respectful to all maids, butlers, and other patrons</li>
+                                <li>Photography is allowed with permission</li>
+                                <li>Tips are appreciated but not required</li>
+                                <li>Reservations recommended for groups of 4+</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE VIEW -->
+            <div id="profile-view" class="hidden p-4">
+                <h1 class="text-xl font-bold mb-4">My Profile</h1>
+                
+                <div class="bg-white border rounded-lg p-4">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-500 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold">Adventurer</h2>
+                            <p class="text-sm text-gray-600">Loyalty Points: 750</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-medium">Favorite Menu Items</h3>
+                            <div class="mt-1 p-2 bg-pink-50 rounded-md">
+                                <p>You haven't marked any favorites yet!</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-medium">Reservation History</h3>
+                            <div class="mt-1 p-2 bg-pink-50 rounded-md">
+                                <p>No past reservations</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-medium">Settings</h3>
+                            <div class="mt-1 space-y-2">
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                                    <span>Notifications</span>
+                                    <div class="w-10 h-6 bg-pink-400 rounded-full relative">
+                                        <div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                                    <span>Dark Mode</span>
+                                    <div class="w-10 h-6 bg-gray-300 rounded-full relative">
+                                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <button id="staff-login-btn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-md mt-2">
+                                Staff Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAFF VIEW -->
+            <div id="staff-view" class="hidden p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-xl font-bold">Staff Portal</h1>
+                    <span id="staff-badge" class="px-2 py-1 rounded-full text-xs staff-badge">Staff Mode</span>
+                </div>
+                
+                <!-- POS Section -->
+                <div class="bg-white border rounded-lg overflow-hidden mb-4">
+                    <div class="bg-pink-100 p-3 border-b">
+                        <h2 class="font-semibold">Point of Sale</h2>
+                    </div>
+                    
+                    <div class="p-4 space-y-4">
+                        <!-- Current Orders -->
+                        <div>
+                            <h3 class="font-medium mb-2">Current Orders</h3>
+                            <div class="space-y-2">
+                                <div class="border rounded-md p-3 bg-yellow-50">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium">Order #1042</span>
+                                        <span class="text-yellow-600 text-sm">In Progress</span>
+                                    </div>
+                                    <div class="text-sm mt-1">Table 3 • Placed 10 min ago</div>
+                                    <div class="mt-2 space-y-1 text-sm">
+                                        <div class="flex justify-between">
+                                            <span>1× Moogle Mocha</span>
+                                            <span>5,000 gil</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>2× Carbuncle Cupcakes</span>
+                                            <span>7,000 gil</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 pt-2 border-t flex justify-between">
+                                        <span class="font-medium">Total</span>
+                                        <span>12,000 gil</span>
+                                    </div>
+                                    <div class="flex space-x-2 mt-3">
+                                        <button class="flex-1 bg-green-500 hover:bg-green-600 text-white py-1 rounded text-sm">
+                                            Complete
+                                        </button>
+                                        <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 rounded text-sm">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="border rounded-md p-3">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium">Order #1041</span>
+                                        <span class="text-green-600 text-sm">Ready</span>
+                                    </div>
+                                    <div class="text-sm mt-1">Table 5 • Placed 18 min ago</div>
+                                    <div class="mt-2 space-y-1 text-sm">
+                                        <div class="flex justify-between">
+                                            <span>1× Tank Buster Sandwich</span>
+                                            <span>8,500 gil</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>1× Limit Break Lemonade</span>
+                                            <span>4,000 gil</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 pt-2 border-t flex justify-between">
+                                        <span class="font-medium">Total</span>
+                                        <span>12,500 gil</span>
+                                    </div>
+                                    <div class="flex space-x-2 mt-3">
+                                        <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-1 rounded text-sm">
+                                            Deliver
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- New Order -->
+                        <div>
+                            <h3 class="font-medium mb-2">New Order</h3>
+                            <button class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-md">
+                                Create New Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Staff Controls -->
+                <div class="bg-white border rounded-lg overflow-hidden">
+                    <div class="bg-pink-100 p-3 border-b">
+                        <h2 class="font-semibold">Staff Controls</h2>
+                    </div>
+                    
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <h3 class="font-medium mb-2">Staff Controls</h3>
+                            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md mb-2">
+                                View Today's Schedule
+                            </button>
+                            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
+                                Manage My Shifts
+                            </button>
+                        </div>
+                        
+                        <!-- Admin Controls (Hidden by default) -->
+                        <div id="admin-controls" class="hidden">
+                            <h3 class="font-medium mb-2 flex items-center">
+                                <span>Admin Controls</span>
+                                <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-xs">Admin Only</span>
+                            </h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="bg-purple-100 hover:bg-purple-200 p-3 rounded-md flex flex-col items-center">
+                                    <span class="font-medium">Manage Menu</span>
+                                    <span class="text-xs text-purple-700">Add/edit items</span>
+                                </button>
+                                
+                                <button class="bg-purple-100 hover:bg-purple-200 p-3 rounded-md flex flex-col items-center">
+                                    <span class="font-medium">Sales Report</span>
+                                    <span class="text-xs text-purple-700">View statistics</span>
+                                </button>
+                                
+                                <button class="bg-purple-100 hover:bg-purple-200 p-3 rounded-md flex flex-col items-center">
+                                    <span class="font-medium">Post Updates</span>
+                                    <span class="text-xs text-purple-700">Add announcements</span>
+                                </button>
+                                
+                                <button class="bg-purple-100 hover:bg-purple-200 p-3 rounded-md flex flex-col items-center">
+                                    <span class="font-medium">Manage Events</span>
+                                    <span class="text-xs text-purple-700">Add/edit events</span>
+                                </button>
+                                
+                                <button class="bg-purple-100 hover:bg-purple-200 p-3 rounded-md flex flex-col items-center">
+                                    <span class="font-medium">Staff Accounts</span>
+                                    <span class="text-xs text-purple-700">Manage access</span>
+                                </button>
+                                
+                                <button class="bg-purple-100 hover:bg-purple-200 p-3 rounded-md flex flex-col items-center">
+                                    <span class="font-medium">Settings</span>
+                                    <span class="text-xs text-purple-700">App configuration</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Non-Admin Message -->
+                        <div id="non-admin-message">
+                            <div class="border rounded-md p-4 bg-gray-50">
+                                <p class="text-center text-gray-500">Admin controls are not available with your account level.</p>
+                                <p class="text-center text-sm text-gray-400 mt-1">Please contact a manager for assistance.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Logout -->
+                        <div class="pt-2">
+                            <button id="staff-logout-btn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-md">
+                                Staff Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN EVENTS VIEW -->
+            <div id="admin-events-view" class="hidden p-4">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-xl font-bold">Event Management</h1>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Admin Only</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="relative flex-1 max-w-xs">
+                            <input
+                                type="text"
+                                placeholder="Search events..."
+                                class="w-full pl-10 pr-4 py-2 border rounded-md"
+                            >
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button class="flex items-center space-x-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-sm">
+                                <i class="fas fa-filter text-sm"></i>
+                                <span>Filter</span>
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </button>
+                            
+                            <button class="flex items-center space-x-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm">
+                                <i class="fas fa-plus-circle text-sm"></i>
+                                <span>New Event</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border rounded-lg overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Name
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Reservations
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Staff
+                                    </th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">Cosplay Night: Scions Edition</div>
+                                        <div class="text-xs text-gray-500">8:00 PM - 12:00 AM</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">April 15, 2025</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                            Published
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            20 / 25
+                                        </div>
+                                        <div class="text-xs text-red-500">Almost full!</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            3 assigned
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-purple-600 hover:text-purple-900 mr-3">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">Bard Music Concert</div>
+                                        <div class="text-xs text-gray-500">9:00 PM - 11:00 PM</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">May 10, 2025</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                            Draft
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            0 / 35
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            2 assigned
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-purple-600 hover:text-purple-900 mr-3">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t custom-shadow flex justify-between items-center px-6 py-3 max-w-480 mx-auto">
+            <button id="home-btn" class="flex flex-col items-center nav-active">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-text mt-1">Home</span>
+            </button>
+            
+            <button id="menu-btn" class="flex flex-col items-center nav-inactive">
+                <i class="fas fa-utensils nav-icon"></i>
+                <span class="nav-text mt-1">Menu</span>
+            </button>
+            
+            <button id="events-btn" class="flex flex-col items-center nav-inactive">
+                <i class="fas fa-calendar-alt nav-icon"></i>
+                <span class="nav-text mt-1">Events</span>
+            </button>
+            
+            <button id="info-btn" class="flex flex-col items-center nav-inactive">
+                <i class="fas fa-info-circle nav-icon"></i>
+                <span class="nav-text mt-1">Info</span>
+            </button>
+            
+            <button id="profile-btn" class="flex flex-col items-center nav-inactive">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-text mt-1">Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Staff Login Modal -->
+    <div id="login-modal" class="login-modal hidden">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Staff Login</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Username</label>
+                    <input 
+                        id="username-input"
+                        type="text" 
+                        class="w-full border rounded-md p-2"
+                        placeholder="Enter your staff username"
+                    />
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1">Password</label>
+                    <input 
+                        id="password-input"
+                        type="password" 
+                        class="w-full border rounded-md p-2"
+                        placeholder="Enter your password"
+                    />
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button
+                        id="login-btn"
+                        class="flex-1 bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-md"
+                    >
+                        Login
+                    </button>
+                    <button
+                        id="cancel-login-btn"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-md"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const views = [
+            'home-view', 'menu-view', 'events-view', 'info-view', 
+            'profile-view', 'staff-view', 'admin-events-view'
+        ];
+        const navButtons = ['home-btn', 'menu-btn', 'events-btn', 'info-btn', 'profile-btn'];
+        
+        // State
+        let isLoggedIn = false;
+        let isAdmin = false;
+        
+        // Initialize
+        function init() {
+            // Set up navigation
+            navButtons.forEach(btnId => {
+                document.getElementById(btnId).addEventListener('click', () => {
+                    navigateTo(btnId.split('-')[0]);
+                });
+            });
+            
+            // Staff login
+            document.getElementById('staff-login-btn').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('cancel-login-btn').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('hidden');
+            });
+            
+            document.getElementById('login-btn').addEventListener('click', handleLogin);
+            
+            // Staff logout
+            document.getElementById('staff-logout-btn').addEventListener('click', handleLogout);
+        }
+        
+        // Navigation
+        function navigateTo(viewName) {
+            // Hide all views
+            views.forEach(view => {
+                document.getElementById(view).classList.add('hidden');
+            });
+            
+            // Deactivate all nav buttons
+            navButtons.forEach(btn => {
+                document.getElementById(btn).classList.remove('nav-active');
+                document.getElementById(btn).classList.add('nav-inactive');
+            });
+            
+            // Special case for staff view
+            if (viewName === 'staff' && isLoggedIn) {
+                document.getElementById('staff-view').classList.remove('hidden');
+                return;
+            }
+            
+            // Show selected view
+            document.getElementById(`${viewName}-view`).classList.remove('hidden');
+            
+            // Activate current nav button
+            document.getElementById(`${viewName}-btn`).classList.remove('nav-inactive');
+            document.getElementById(`${viewName}-btn`).classList.add('nav-active');
+        }
+        
+        // Login handler
+        function handleLogin() {
+            const username = document.getElementById('username-input').value;
+            const password = document.getElementById('password-input').value;
+            
+            // Demo login logic - in real app this would check against a database
+            if (username && password) {
+                isLoggedIn = true;
+                isAdmin = username.toLowerCase() === 'admin';
+                
+                // Update UI based on role
+                if (isAdmin) {
+                    document.getElementById('staff-badge').textContent = 'Admin Mode';
+                    document.getElementById('staff-badge').classList.remove('staff-badge');
+                    document.getElementById('staff-badge').classList.add('admin-badge');
+                    document.getElementById('admin-controls').classList.remove('hidden');
+                    document.getElementById('non-admin-message').classList.add('hidden');
+                } else {
+                    document.getElementById('staff-badge').textContent = 'Staff Mode';
+                    document.getElementById('admin-controls').classList.add('hidden');
+                    document.getElementById('non-admin-message').classList.remove('hidden');
+                }
+                
+                // Close modal and navigate to staff view
+                document.getElementById('login-modal').classList.add('hidden');
+                navigateTo('staff');
+            }
+        }
+        
+        // Logout handler
+        function handleLogout() {
+            isLoggedIn = false;
+            isAdmin = false;
+            navigateTo('profile');
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>d class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">Starlight Celebration Special</div>
+                                        <div class="text-xs text-gray-500">8:00 PM - 12:00 AM</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">December 18, 2025</div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                            Published
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            12 / 30
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            3 assigned
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-purple-600 hover:text-purple-900 mr-3">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <t
