@@ -101,7 +101,7 @@
             <div id="home-view">
                 <!-- Header Image -->
                 <div class="relative h-40 rounded-lg overflow-hidden">
-                    <img src="all maids.png" alt="Maid Cafe" class="w-full object-cover">
+                    <img srcallmaids.png" alt="Lali-ho Maid Cafe" class="w-full object-cover">
                     <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
                         <h1 class="text-xl font-bold logo-font">Eorzean Maid Haven</h1>
                         <p>Open Friday-Sunday, 8PM-12AM EST</p>
@@ -729,33 +729,69 @@
             
             // Staff logout
             document.getElementById('staff-logout-btn').addEventListener('click', handleLogout);
+
+            // Check for saved login (uncomment when adding localStorage support)
+            // checkSavedLogin();
         }
         
         // Navigation
         function navigateTo(viewName) {
-            // Hide all views
-            views.forEach(view => {
-                document.getElementById(view).classList.add('hidden');
-            });
-            
-            // Deactivate all nav buttons
-            navButtons.forEach(btn => {
-                document.getElementById(btn).classList.remove('nav-active');
-                document.getElementById(btn).classList.add('nav-inactive');
-            });
-            
-            // Special case for staff view
-            if (viewName === 'staff' && isLoggedIn) {
-                document.getElementById('staff-view').classList.remove('hidden');
-                return;
+            try {
+                // Hide all views
+                views.forEach(view => {
+                    const viewElement = document.getElementById(view);
+                    if (viewElement) {
+                        viewElement.classList.add('hidden');
+                    }
+                });
+                
+                // Deactivate all nav buttons
+                navButtons.forEach(btn => {
+                    const btnElement = document.getElementById(btn);
+                    if (btnElement) {
+                        btnElement.classList.remove('nav-active');
+                        btnElement.classList.add('nav-inactive');
+                    }
+                });
+                
+                // Special case for staff view
+                if (viewName === 'staff' && isLoggedIn) {
+                    const staffView = document.getElementById('staff-view');
+                    if (staffView) {
+                        staffView.classList.remove('hidden');
+                    }
+                    return;
+                }
+                
+                // Special case for admin events view
+                if (viewName === 'admin-events' && isLoggedIn && isAdmin) {
+                    const adminEventsView = document.getElementById('admin-events-view');
+                    if (adminEventsView) {
+                        adminEventsView.classList.remove('hidden');
+                    }
+                    return;
+                }
+                
+                // Show selected view
+                const selectedView = document.getElementById(`${viewName}-view`);
+                if (selectedView) {
+                    selectedView.classList.remove('hidden');
+                }
+                
+                // Activate current nav button
+                const activeBtn = document.getElementById(`${viewName}-btn`);
+                if (activeBtn) {
+                    activeBtn.classList.remove('nav-inactive');
+                    activeBtn.classList.add('nav-active');
+                }
+            } catch (error) {
+                console.error("Navigation error:", error);
+                // Fallback to home view on error
+                const homeView = document.getElementById('home-view');
+                if (homeView) {
+                    homeView.classList.remove('hidden');
+                }
             }
-            
-            // Show selected view
-            document.getElementById(`${viewName}-view`).classList.remove('hidden');
-            
-            // Activate current nav button
-            document.getElementById(`${viewName}-btn`).classList.remove('nav-inactive');
-            document.getElementById(`${viewName}-btn`).classList.add('nav-active');
         }
         
         // Login handler
@@ -769,20 +805,30 @@
                 isAdmin = username.toLowerCase() === 'admin';
                 
                 // Update UI based on role
-                if (isAdmin) {
-                    document.getElementById('staff-badge').textContent = 'Admin Mode';
-                    document.getElementById('staff-badge').classList.remove('staff-badge');
-                    document.getElementById('staff-badge').classList.add('admin-badge');
-                    document.getElementById('admin-controls').classList.remove('hidden');
-                    document.getElementById('non-admin-message').classList.add('hidden');
-                } else {
-                    document.getElementById('staff-badge').textContent = 'Staff Mode';
-                    document.getElementById('admin-controls').classList.add('hidden');
-                    document.getElementById('non-admin-message').classList.remove('hidden');
+                const staffBadge = document.getElementById('staff-badge');
+                const adminControls = document.getElementById('admin-controls');
+                const nonAdminMessage = document.getElementById('non-admin-message');
+                
+                if (isAdmin && staffBadge && adminControls && nonAdminMessage) {
+                    staffBadge.textContent = 'Admin Mode';
+                    staffBadge.classList.remove('staff-badge');
+                    staffBadge.classList.add('admin-badge');
+                    adminControls.classList.remove('hidden');
+                    nonAdminMessage.classList.add('hidden');
+                } else if (staffBadge && adminControls && nonAdminMessage) {
+                    staffBadge.textContent = 'Staff Mode';
+                    adminControls.classList.add('hidden');
+                    nonAdminMessage.classList.remove('hidden');
                 }
                 
+                // Save login state (uncomment when adding localStorage support)
+                // saveLoginState();
+                
                 // Close modal and navigate to staff view
-                document.getElementById('login-modal').classList.add('hidden');
+                const loginModal = document.getElementById('login-modal');
+                if (loginModal) {
+                    loginModal.classList.add('hidden');
+                }
                 navigateTo('staff');
             }
         }
@@ -791,7 +837,54 @@
         function handleLogout() {
             isLoggedIn = false;
             isAdmin = false;
+            
+            // Clear saved login (uncomment when adding localStorage support)
+            // clearLoginState();
+            
             navigateTo('profile');
+        }
+        
+        // Save login state to localStorage (for future enhancement)
+        function saveLoginState() {
+            localStorage.setItem('isLoggedIn', isLoggedIn);
+            localStorage.setItem('isAdmin', isAdmin);
+        }
+        
+        // Check for saved login (for future enhancement)
+        function checkSavedLogin() {
+            const savedLogin = localStorage.getItem('isLoggedIn');
+            const savedAdmin = localStorage.getItem('isAdmin');
+            
+            if (savedLogin === 'true') {
+                isLoggedIn = true;
+                isAdmin = savedAdmin === 'true';
+                
+                // Update UI based on saved role
+                if (isAdmin) {
+                    document.getElementById('staff-badge').textContent = 'Admin Mode';
+                    document.getElementById('staff-badge').classList.remove('staff-badge');
+                    document.getElementById('staff-badge').classList.add('admin-badge');
+                    document.getElementById('admin-controls').classList.remove('hidden');
+                    document.getElementById('non-admin-message').classList.add('hidden');
+                }
+            }
+        }
+        
+        // Clear login state from localStorage (for future enhancement)
+        function clearLoginState() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isAdmin');
+        }
+        
+        // Add admin event handlers (for future enhancement)
+        function setupAdminHandlers() {
+            // Event management handlers
+            const manageEventsBtn = document.querySelector('#admin-controls button:nth-child(4)');
+            if (manageEventsBtn) {
+                manageEventsBtn.addEventListener('click', () => {
+                    navigateTo('admin-events');
+                });
+            }
         }
         
         // Initialize when DOM is loaded
