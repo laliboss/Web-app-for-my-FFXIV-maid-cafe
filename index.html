@@ -204,7 +204,7 @@
                                 <span class="text-sm font-semibold">8,500 gil</span>
                             </div>
                             <p class="text-sm text-gray-600">A hearty sandwich that will give you the strength to face any trial</p>
-</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -218,8 +218,6 @@
                                 <span class="text-sm font-semibold">7,000 gil</span>
                             </div>
                             <p class="text-sm text-gray-600">Assorted Eorzean cheeses with gysahl green garnish</p>
-                        </div>
-
                         </div>
                     </div>
                 </div>
@@ -369,14 +367,14 @@
                                         <span class="font-medium">Order #1042</span>
                                         <span class="text-yellow-600 text-sm">In Progress</span>
                                     </div>
-                                    <div class="text-sm mt-1">Table 3 â€¢ Placed 10 min ago</div>
+                                    <div class="text-sm mt-1">Table 3 • Placed 10 min ago</div>
                                     <div class="mt-2 space-y-1 text-sm">
                                         <div class="flex justify-between">
-                                            <span>1Ã— Moogle Mocha</span>
+                                            <span>1× Moogle Mocha</span>
                                             <span>5,000 gil</span>
                                         </div>
                                         <div class="flex justify-between">
-                                            <span>2Ã— Carbuncle Cupcakes</span>
+                                            <span>2× Carbuncle Cupcakes</span>
                                             <span>7,000 gil</span>
                                         </div>
                                     </div>
@@ -399,14 +397,14 @@
                                         <span class="font-medium">Order #1041</span>
                                         <span class="text-green-600 text-sm">Ready</span>
                                     </div>
-                                    <div class="text-sm mt-1">Table 5 â€¢ Placed 18 min ago</div>
+                                    <div class="text-sm mt-1">Table 5 • Placed 18 min ago</div>
                                     <div class="mt-2 space-y-1 text-sm">
                                         <div class="flex justify-between">
-                                            <span>1Ã— Tank Buster Sandwich</span>
+                                            <span>1× Tank Buster Sandwich</span>
                                             <span>8,500 gil</span>
                                         </div>
                                         <div class="flex justify-between">
-                                            <span>1Ã— Limit Break Lemonade</span>
+                                            <span>1× Limit Break Lemonade</span>
                                             <span>4,000 gil</span>
                                         </div>
                                     </div>
@@ -711,6 +709,29 @@
         </div>
     </div>
 
+    <!-- Add Firebase SDK here, before your own script -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyAPYAqlBDvocDkiVw6-2BR2H9uL7pa7YW8",
+        authDomain: "lali-homaidcafe.firebaseapp.com",
+        projectId: "lali-homaidcafe",
+        storageBucket: "lali-homaidcafe.firebasestorage.app",
+        messagingSenderId: "609959968788",
+        appId: "1:609959968788:web:5fec682e56a8022b73e701",
+        measurementId: "G-614TE99WMZ"
+      };
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
+
     <script>
         // DOM Elements
         const views = [
@@ -907,36 +928,4 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-</html>d class="px-4 py-3 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">Starlight Celebration Special</div>
-                                        <div class="text-xs text-gray-500">8:00 PM - 12:00 AM</div>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">December 18, 2025</div>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <span class="inline-flex px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                            Published
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">
-                                            12 / 30
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">
-                                            3 assigned
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                                        <button class="text-purple-600 hover:text-purple-900 mr-3">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <t
+</html>
