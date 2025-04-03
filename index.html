@@ -832,97 +832,45 @@
         }
         
         // Login handler
-        function handleLogin() {
-            const username = document.getElementById('username-input').value;
-            const password = document.getElementById('password-input').value;
-            
-            // Demo login logic - in real app this would check against a database
-            if (username && password) {
-                isLoggedIn = true;
-                isAdmin = username.toLowerCase() === 'admin';
-                
-                // Update UI based on role
-                const staffBadge = document.getElementById('staff-badge');
-                const adminControls = document.getElementById('admin-controls');
-                const nonAdminMessage = document.getElementById('non-admin-message');
-                
-                if (isAdmin && staffBadge && adminControls && nonAdminMessage) {
-                    staffBadge.textContent = 'Admin Mode';
-                    staffBadge.classList.remove('staff-badge');
-                    staffBadge.classList.add('admin-badge');
-                    adminControls.classList.remove('hidden');
-                    nonAdminMessage.classList.add('hidden');
-                } else if (staffBadge && adminControls && nonAdminMessage) {
-                    staffBadge.textContent = 'Staff Mode';
-                    adminControls.classList.add('hidden');
-                    nonAdminMessage.classList.remove('hidden');
-                }
-                
-                // Save login state (uncomment when adding localStorage support)
-                // saveLoginState();
-                
-                // Close modal and navigate to staff view
-                const loginModal = document.getElementById('login-modal');
-                if (loginModal) {
-                    loginModal.classList.add('hidden');
-                }
-                navigateTo('staff');
+function handleLogin() {
+  const username = document.getElementById('username-input').value;
+  const password = document.getElementById('password-input').value;
+  
+  if (username && password) {
+    // Use Firebase authentication
+    auth.signInWithEmailAndPassword(username, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        isLoggedIn = true;
+        
+        // Check admin status from Firestore
+        db.collection('staff').doc(user.uid).get()
+          .then((doc) => {
+            if (doc.exists && doc.data().role === 'admin') {
+              isAdmin = true;
+              document.getElementById('staff-badge').textContent = 'Admin Mode';
+              document.getElementById('staff-badge').classList.remove('staff-badge');
+              document.getElementById('staff-badge').classList.add('admin-badge');
+              document.getElementById('admin-controls').classList.remove('hidden');
+              document.getElementById('non-admin-message').classList.add('hidden');
+            } else {
+              isAdmin = false;
+              document.getElementById('staff-badge').textContent = 'Staff Mode';
+              document.getElementById('admin-controls').classList.add('hidden');
+              document.getElementById('non-admin-message').classList.remove('hidden');
             }
-        }
-        
-        // Logout handler
-        function handleLogout() {
-            isLoggedIn = false;
-            isAdmin = false;
             
-            // Clear saved login (uncomment when adding localStorage support)
-            // clearLoginState();
-            
-            navigateTo('profile');
-        }
-        
-        // Save login state to localStorage (for future enhancement)
-        function saveLoginState() {
-            localStorage.setItem('isLoggedIn', isLoggedIn);
-            localStorage.setItem('isAdmin', isAdmin);
-        }
-        
-        // Check for saved login (for future enhancement)
-        function checkSavedLogin() {
-            const savedLogin = localStorage.getItem('isLoggedIn');
-            const savedAdmin = localStorage.getItem('isAdmin');
-            
-            if (savedLogin === 'true') {
-                isLoggedIn = true;
-                isAdmin = savedAdmin === 'true';
-                
-                // Update UI based on saved role
-                if (isAdmin) {
-                    document.getElementById('staff-badge').textContent = 'Admin Mode';
-                    document.getElementById('staff-badge').classList.remove('staff-badge');
-                    document.getElementById('staff-badge').classList.add('admin-badge');
-                    document.getElementById('admin-controls').classList.remove('hidden');
-                    document.getElementById('non-admin-message').classList.add('hidden');
-                }
-            }
-        }
-        
-        // Clear login state from localStorage (for future enhancement)
-        function clearLoginState() {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('isAdmin');
-        }
-        
-        // Add admin event handlers (for future enhancement)
-        function setupAdminHandlers() {
-            // Event management handlers
-            const manageEventsBtn = document.querySelector('#admin-controls button:nth-child(4)');
-            if (manageEventsBtn) {
-                manageEventsBtn.addEventListener('click', () => {
-                    navigateTo('admin-events');
-                });
-            }
-        }
+            // Close modal and navigate to staff view
+            document.getElementById('login-modal').classList.add('hidden');
+            navigateTo('staff');
+          });
+      })
+      .catch((error) => {
+        alert('Login failed: ' + error.message);
+      });
+  }
+}
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
