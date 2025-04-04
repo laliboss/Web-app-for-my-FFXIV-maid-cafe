@@ -711,33 +711,33 @@
 
     <!-- Add Firebase SDK here, before your own script -->
     <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-  
-  // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyAPYAqlBDvocDkiVw6-2BR2H9uL7pa7YW8",
-    authDomain: "lali-homaidcafe.firebaseapp.com",
-    projectId: "lali-homaidcafe",
-    storageBucket: "lali-homaidcafe.firebasestorage.app",
-    messagingSenderId: "609959968788",
-    appId: "1:609959968788:web:5fec682e56a8022b73e701",
-    measurementId: "G-614TE99WMZ"
-  };
-  
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  
-  // Initialize Firestore
-  const db = getFirestore(app);
-  
-  // Make db available globally
-  window.db = db;
-  window.firestore = { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc };
-</script>
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+      import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+      
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyAPYAqlBDvocDkiVw6-2BR2H9uL7pa7YW8",
+        authDomain: "lali-homaidcafe.firebaseapp.com",
+        projectId: "lali-homaidcafe",
+        storageBucket: "lali-homaidcafe.firebasestorage.app",
+        messagingSenderId: "609959968788",
+        appId: "1:609959968788:web:5fec682e56a8022b73e701",
+        measurementId: "G-614TE99WMZ"
+      };
+      
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      
+      // Initialize Firestore
+      const db = getFirestore(app);
+      
+      // Make db available globally
+      window.db = db;
+      window.firestore = { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc };
+    </script>
 
     <script>
         // DOM Elements
@@ -773,6 +773,13 @@
             
             // Staff logout
             document.getElementById('staff-logout-btn').addEventListener('click', handleLogout);
+            
+            // Load data from Firestore
+            loadMenu();
+            loadEvents();
+            
+            // Set up admin event handlers
+            setupAdminHandlers();
 
             // Check for saved login (uncomment when adding localStorage support)
             // checkSavedLogin();
@@ -839,49 +846,319 @@
         }
         
         // Login handler
-function handleLogin() {
-  const username = document.getElementById('username-input').value;
-  const password = document.getElementById('password-input').value;
-  
-  if (username && password) {
-    // Use Firebase authentication
-    auth.signInWithEmailAndPassword(username, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        isLoggedIn = true;
+        function handleLogin() {
+            const username = document.getElementById('username-input').value;
+            const password = document.getElementById('password-input').value;
+            
+            // Demo login logic - in real app this would check against a database
+            if (username && password) {
+                isLoggedIn = true;
+                isAdmin = username.toLowerCase() === 'admin';
+                
+                // Update UI based on role
+                const staffBadge = document.getElementById('staff-badge');
+                const adminControls = document.getElementById('admin-controls');
+                const nonAdminMessage = document.getElementById('non-admin-message');
+                
+                if (isAdmin && staffBadge && adminControls && nonAdminMessage) {
+                    staffBadge.textContent = 'Admin Mode';
+                    staffBadge.classList.remove('staff-badge');
+                    staffBadge.classList.add('admin-badge');
+                    adminControls.classList.remove('hidden');
+                    nonAdminMessage.classList.add('hidden');
+                } else if (staffBadge && adminControls && nonAdminMessage) {
+                    staffBadge.textContent = 'Staff Mode';
+                    adminControls.classList.add('hidden');
+                    nonAdminMessage.classList.remove('hidden');
+                }
+                
+                // Save login state (uncomment when adding localStorage support)
+                // saveLoginState();
+                
+                // Close modal and navigate to staff view
+                const loginModal = document.getElementById('login-modal');
+                if (loginModal) {
+                    loginModal.classList.add('hidden');
+                }
+                navigateTo('staff');
+            }
+        }
         
-        // Check admin status from Firestore
-        db.collection('staff').doc(user.uid).get()
-          .then((doc) => {
-            if (doc.exists && doc.data().role === 'admin') {
-              isAdmin = true;
-              document.getElementById('staff-badge').textContent = 'Admin Mode';
-              document.getElementById('staff-badge').classList.remove('staff-badge');
-              document.getElementById('staff-badge').classList.add('admin-badge');
-              document.getElementById('admin-controls').classList.remove('hidden');
-              document.getElementById('non-admin-message').classList.add('hidden');
-            } else {
-              isAdmin = false;
-              document.getElementById('staff-badge').textContent = 'Staff Mode';
-              document.getElementById('admin-controls').classList.add('hidden');
-              document.getElementById('non-admin-message').classList.remove('hidden');
+        // Logout handler
+        function handleLogout() {
+            isLoggedIn = false;
+            isAdmin = false;
+            
+            // Clear saved login (uncomment when adding localStorage support)
+            // clearLoginState();
+            
+            navigateTo('profile');
+        }
+        
+        // Save login state to localStorage (for future enhancement)
+        function saveLoginState() {
+            localStorage.setItem('isLoggedIn', isLoggedIn);
+            localStorage.setItem('isAdmin', isAdmin);
+        }
+        
+        // Check for saved login (for future enhancement)
+        function checkSavedLogin() {
+            const savedLogin = localStorage.getItem('isLoggedIn');
+            const savedAdmin = localStorage.getItem('isAdmin');
+            
+            if (savedLogin === 'true') {
+                isLoggedIn = true;
+                isAdmin = savedAdmin === 'true';
+                
+                // Update UI based on saved role
+                if (isAdmin) {
+                    document.getElementById('staff-badge').textContent = 'Admin Mode';
+                    document.getElementById('staff-badge').classList.remove('staff-badge');
+                    document.getElementById('staff-badge').classList.add('admin-badge');
+                    document.getElementById('admin-controls').classList.remove('hidden');
+                    document.getElementById('non-admin-message').classList.add('hidden');
+                }
+            }
+        }
+        
+        // Clear login state from localStorage (for future enhancement)
+        function clearLoginState() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isAdmin');
+        }
+        
+        // Add admin event handlers (for future enhancement)
+        function setupAdminHandlers() {
+            // Event management handlers
+            const manageEventsBtn = document.querySelector('#admin-controls button:nth-child(4)');
+            if (manageEventsBtn) {
+                manageEventsBtn.addEventListener('click', () => {
+                    navigateTo('admin-events');
+                });
+            }
+        }
+        
+        // Load menu items from Firestore
+        async function loadMenu() {
+          try {
+            const menuCollection = window.firestore.collection(window.db, 'menu_items');
+            const menuSnapshot = await window.firestore.getDocs(menuCollection);
+            const menuItems = [];
+            
+            menuSnapshot.forEach((doc) => {
+              menuItems.push({
+                id: doc.id,
+                ...doc.data()
+              });
+            });
+            
+            // Clear existing menu containers
+            const mealsContainer = document.querySelector('#menu-view .mb-4:nth-child(2) .mt-2');
+            const specialsContainer = document.querySelector('#menu-view .mb-4:nth-child(3) .mt-2');
+            const snacksContainer = document.querySelector('#menu-view div:nth-child(4) .mt-2');
+            
+            if (mealsContainer) mealsContainer.innerHTML = '';
+            if (specialsContainer) specialsContainer.innerHTML = '';
+            if (snacksContainer) snacksContainer.innerHTML = '';
+            
+            // Populate menu containers with items from Firestore
+            menuItems.forEach(item => {
+              const itemHTML = `
+                <div class="bg-white border rounded-lg p-3">
+                  <div class="flex justify-between">
+                    <h3 class="font-medium">${item.name}</h3>
+                    <span class="text-sm font-semibold">${item.price}</span>
+                  </div>
+                  <p class="text-sm text-gray-600">${item.description}</p>
+                </div>
+              `;
+              
+              if (item.category === 'Meals' && mealsContainer) {
+                mealsContainer.innerHTML += itemHTML;
+              } else if (item.category === 'Specials' && specialsContainer) {
+                specialsContainer.innerHTML += itemHTML;
+              } else if (item.category === 'Snacks' && snacksContainer) {
+                snacksContainer.innerHTML += itemHTML;
+              }
+            });
+            
+            // Also update featured items on home page
+            updateFeaturedItems(menuItems);
+            
+          } catch (error) {
+            console.error("Error loading menu: ", error);
+          }
+        }
+
+        // Load events from Firestore
+        async function loadEvents() {
+          try {
+            const eventsCollection = window.firestore.collection(window.db, 'events');
+            const eventsSnapshot = await window.firestore.getDocs(eventsCollection);
+            const events = [];
+            
+            eventsSnapshot.forEach((doc) => {
+              events.push({
+                id: doc.id,
+                ...doc.data()
+              });
+            });
+            
+            // Sort events by date
+            events.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Clear existing events container
+            const eventsContainer = document.querySelector('#events-view .space-y-4');
+            if (eventsContainer) eventsContainer.innerHTML = '';
+            
+            // Populate events container with items from Firestore
+            events.forEach(event => {
+              const eventHTML = `
+                <div class="bg-white border rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <h2 class="text-lg font-medium">${event.name}</h2>
+                    <span class="text-sm bg-pink-200 px-2 py-1 rounded">${event.date}</span>
+                  </div>
+                  <p class="mt-2">${event.description}</p>
+                </div>
+              `;
+              
+              if (eventsContainer) {
+                eventsContainer.innerHTML += eventHTML;
+              }
+            });
+            
+            // Update next event on home page if events exist
+            if (events.length > 0) {
+              updateNextEvent(events[0]);
             }
             
-            // Close modal and navigate to staff view
-            document.getElementById('login-modal').classList.add('hidden');
-            navigateTo('staff');
-          });
-      })
-      .catch((error) => {
-        alert('Login failed: ' + error.message);
-      });
-  }
-}
+          } catch (error) {
+            console.error("Error loading events: ", error);
+          }
+        }
+
+        // Update featured items on home page
+        function updateFeaturedItems(menuItems) {
+          // Get two featured items (you could add a 'featured: true' flag in Firestore)
+          const featuredItems = menuItems.slice(0, 2);
+          
+          // Get the featured items container
+          const featuredContainer = document.querySelector('#home-view .mt-4:nth-child(4) .space-y-2');
+          if (featuredContainer && featuredItems.length > 0) {
+            featuredContainer.innerHTML = '';
+            
+            // Add each featured item
+            featuredItems.forEach(item => {
+              featuredContainer.innerHTML += `
+                <div class="bg-white border rounded-lg p-3">
+                  <div class="flex justify-between">
+                    <h3 class="font-medium">${item.name}</h3>
+                    <span class="text-sm font-semibold">${item.price}</span>
+                  </div>
+                  <p class="text-sm text-gray-600">${item.description}</p>
+                </div>
+              `;
+            });
+          }
+        }
+
+        // Update next event on home page
+        function updateNextEvent(event) {
+          const nextEventContainer = document.querySelector('#home-view .mt-4:nth-child(3) .bg-pink-50');
+          if (nextEventContainer && event) {
+            const eventContent = `
+              <div class="flex justify-between items-center">
+                <h3 class="font-medium">${event.name}</h3>
+                <span class="text-sm bg-pink-200 px-2 py-1 rounded">${event.date}</span>
+              </div>
+              <p class="text-sm mt-1">${event.description}</p>
+            `;
+            
+            nextEventContainer.innerHTML = eventContent;
+          }
+        }
+
+        // Add a new menu item
+        async function addMenuItem(name, price, description, category) {
+          try {
+            const menuCollection = window.firestore.collection(window.db, 'menu_items');
+            await window.firestore.addDoc(menuCollection, {
+              name: name,
+              price: price,
+              description: description,
+              category: category,
+              createdAt: new Date()
+            });
+            
+            // Reload menu to show new item
+            await loadMenu();
+            return true;
+          } catch (error) {
+            console.error("Error adding menu item: ", error);
+            return false;
+          }
+        }
+
+        // Add a new event
+        async function addEvent(name, date, description, time = '8:00 PM - 12:00 AM', capacity = 25) {
+          try {
+            const eventsCollection = window.firestore.collection(window.db, 'events');
+            await window.firestore.addDoc(eventsCollection, {
+              name: name,
+              date: date,
+              time: time,
+              description: description,
+              capacity: capacity,
+              reservations: 0,
+              status: 'draft',
+              staffAssigned: [],
+              createdAt: new Date()
+            });
+            
+            // Reload events to show new event
+            await loadEvents();
+            return true;
+          } catch (error) {
+            console.error("Error adding event: ", error);
+            return false;
+          }
+        }
+
+        // Update event status (publish/unpublish)
+        async function updateEventStatus(eventId, status) {
+          try {
+            const eventRef = window.firestore.doc(window.db, 'events', eventId);
+            await window.firestore.updateDoc(eventRef, {
+              status: status
+            });
+            
+            // Reload events to show updated status
+            await loadEvents();
+            return true;
+          } catch (error) {
+            console.error("Error updating event status: ", error);
+            return false;
+          }
+        }
+
+        // Delete an event
+        async function deleteEvent(eventId) {
+          try {
+            const eventRef = window.firestore.doc(window.db, 'events', eventId);
+            await window.firestore.deleteDoc(eventRef);
+            
+            // Reload events to show changes
+            await loadEvents();
+            return true;
+          } catch (error) {
+            console.error("Error deleting event: ", error);
+            return false;
+          }
+        }
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
-
