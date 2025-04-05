@@ -6,6 +6,8 @@
     <title>Lali-ho Maid Cafe</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Backup Font Awesome CDN if primary fails -->
+    <link href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" rel="stylesheet" crossorigin="anonymous">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -20,9 +22,32 @@
         }
         .nav-icon {
             font-size: 1.25rem;
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            text-align: center;
         }
         .nav-text {
             font-size: 0.75rem;
+        }
+        /* Backup icons in case Font Awesome fails */
+        .nav-icon-backup {
+            display: none;
+        }
+        .fa-home::before {
+            content: "??";
+        }
+        .fa-utensils::before {
+            content: "???";
+        }
+        .fa-calendar-alt::before {
+            content: "??";
+        }
+        .fa-info-circle::before {
+            content: "??";
+        }
+        .fa-user::before {
+            content: "??";
         }
         .logo-font {
             font-family: 'Arial', sans-serif;
